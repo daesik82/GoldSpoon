@@ -3,12 +3,9 @@
 """
 
 
-from BigBull.crawler.base_crawler import BaseCrawler
-from BigBull.data_structure.stock_code_bucket import StockCodeBucket
-
-
-KOSPI = 0
-KOSDAK = 1
+from .base_crawler import BaseCrawler
+from ..data_structure.stock_code_bucket import StockCodeBucket
+from BigBull import KOSPI, KOSDAK
 
 
 __all__ = ['StockCodeCrawler']
