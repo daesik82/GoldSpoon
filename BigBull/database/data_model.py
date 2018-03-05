@@ -32,3 +32,11 @@ hist_data_table = Table('hist_data', __meta,
                         Column('low', Integer()),
                         Column('volume', Integer())
                        )
+
+
+#Column('created_on', DateTime(), default=datetime.now),
+#                     Column('updated_on', DateTime(), default=datetime.now, onupdate=datetime.now),
+# hist_data_table 에 추가
+
+#from sqlalchemy import Index
+#Index('ix_test', mytable.c.cookie_sku, mytable.c.cookie_name))

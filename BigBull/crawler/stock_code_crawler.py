@@ -7,7 +7,6 @@ from .base_crawler import BaseCrawler
 from ..data_structure.stock_code_bucket import StockCodeBucket
 from BigBull import KOSPI, KOSDAK
 
-
 __all__ = ['StockCodeCrawler']
 
 class StockCodeCrawler(BaseCrawler):
@@ -58,7 +57,7 @@ class StockCodeCrawler(BaseCrawler):
     def save_stock_code(self):
         kospi = 0
         kosdak = 0
-        is_okay = False
+        is_okay = True
 
 
         for market_type in [KOSPI, KOSDAK]:
@@ -83,8 +82,8 @@ class StockCodeCrawler(BaseCrawler):
 
                 stock_code_list.append(temp_dict)
 
-        # 종목코드 DB에 저장한다.
-        is_okay = self.db.insert_multiple(self.db.stocks_db_name,
+            # 종목코드 DB에 저장한다.
+            is_okay *= self.db.insert_multiple(self.db.stocks_db_name,
                                             stock_code_list)
 
         if(is_okay):

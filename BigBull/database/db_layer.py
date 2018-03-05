@@ -6,11 +6,17 @@ import pandas as pd
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select
-from sqlalchemy import and_
 
+from sqlalchemy import and_
+from sqlalchemy import select, desc, update
+from sqlalchemy.sql.expression import bindparam
 
 __all__ = ['StockDB']
+
+
+def add_target_item(dic, col_name):
+    dic['target_'+col_name] = dic.get(col_name)
+    return dic
 
 
 class BaseDBAccessLayer:
@@ -75,7 +81,6 @@ class BaseDBAccessLayer:
         except TypeError as error:
             print("argument 'columns' 는 'list' 입니다.")
 
-
     def insert_multiple(self, table_name, data_dict_list):
         """
         Insert multiple rows in a table you select
@@ -120,6 +125,52 @@ class BaseDBAccessLayer:
 
             return False
 
+    def update_multiple(self, table_name, column, data_dict_list):
+        """
+        하나의 column에 대해서 조건을 줘서
+        DB에 기존에 있던 데이터에 대해서 한 번에 Update 한다.
+        """
+        transaction = self.__connection.begin()  # self.__connection.begin()
+
+        if (data_dict_list):
+            try:
+                table = self.find_table(table_name)
+                if (table.c.has_key(column)):
+                    c = table.c.get(column)
+
+                    upd = table.update(). \
+                        where(c == bindparam('target_' + column))
+
+                    added_data_dict_list = [add_target_item(dic, column) for dic in data_dict_list]
+                    # print("added_data_dict_list: ")
+                    # print(added_data_dict_list)
+                    result = self.__connection.execute(upd, added_data_dict_list)
+                    transaction.commit()
+                    return True
+
+                else:
+                    print("{} table 에는 {} Column 이 없습니다".format(table_name, column))
+                    print("Let's RollBack")
+                    transaction.rollback()
+                    return False
+
+            except IntegrityError as error:
+                error_code, error_msg = error.orig.args
+
+                print("IntegrityError!!")
+                print(">>>error_code: {}".format(error_code))
+                print(">>>error_msg: {}".format(error_msg))
+                print("Let's RollBack")
+                transaction.rollback()
+
+                return False
+
+        else:
+            print("빈 dict입니다")
+            transaction.rollback()
+            print("Let's RollBack")
+            return False
+
 
 class StockDB(BaseDBAccessLayer):
     def __init__(self, conn_string, meta, stocks_db_name='stocks'):
@@ -137,8 +188,11 @@ class StockDB(BaseDBAccessLayer):
         s = select([code_column]).where(company_name_column == company_name)
 
         rp = self.db_execute(s)
-        result = rp.first()
-        return result[0]
+        if(rp.rowcount):
+            result = rp.first()
+            return result[0]
+        else:
+            print(f"{company_name} 회사는 DB에 없습니다.")
 
     def load_all_stock_code(self):
         """
