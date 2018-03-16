@@ -283,7 +283,7 @@ class HistoryCrawler(BaseCrawler):
     #  - INSERT 한다.
     """
 
-    def save_history_of(self, company_name, start_date=datetime.datetime.min,
+    def save_history_of(self, company_name, start_date="1956-3-3",
                         end_date=datetime.datetime.today,
                         hard_mode=True):
         """
