@@ -69,8 +69,10 @@ class StockCodeCrawler(BaseCrawler):
             # 종목 갯수 계산
             if market_type == KOSPI:
                 kospi += stock_bucket.count()
+                print(f"kospi: {kospi}")
             elif market_type == KOSDAK:
                 kosdak += stock_bucket.count()
+                print(f"kosdak: {kosdak}")
 
             # multiple insert 를 위해서 저장할 데이터를 담은 리스트를 만든다.
             for code, stock in stock_bucket.iterItems():
@@ -89,6 +91,9 @@ class StockCodeCrawler(BaseCrawler):
         if(is_okay):
             # 아마도 이게 기본 log 가 될듯
             print(f"코스피 {kospi}개의 종목, 코스닥 {kosdak} 종목의 종모코드 정보가 크롤 및 DB에 저장 완료되었습니다.")
+
+        else:
+            print("종목코드를 수집하는 과정에서 에러가 발생하였습니다.")
 
     def leave_footprint_to_db(self):
         """
