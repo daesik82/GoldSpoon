@@ -105,8 +105,9 @@ class BaseDBAccessLayer:
                 transaction.commit()
                 return True
             else:
-                print("This is empty dict")
+                print("This is empty dict, we need list of dict for 'insert_multiple' ")
                 transaction.rollback()
+                print("Let's RollBack")
                 return False
 
         except TypeError as error:
@@ -166,7 +167,7 @@ class BaseDBAccessLayer:
                 return False
 
         else:
-            print("빈 dict입니다")
+            print("This is empty dict, we need list of dict for 'update_multiple' ")
             transaction.rollback()
             print("Let's RollBack")
             return False
