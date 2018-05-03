@@ -172,6 +172,20 @@ class BaseDBAccessLayer:
             print("Let's RollBack")
             return False
 
+    def insert_dataframe(self, table_name, dataframe):
+        # inserting a dataframe to DB
+        try:
+            dataframe.to_sql(table_name, con=self.__engine, if_exists='append', index=False)
+
+        except IntegrityError as error:
+            error_code, error_msg = error.orig.args
+
+            print(f"IntergrityError:\n"
+                  f"\t-error_code: {error_code}\n"
+                  f"\t-error_msg: {error_msg}")
+
+            return False
+
 
 class StockDB(BaseDBAccessLayer):
     def __init__(self, conn_string, meta, stocks_db_name='stocks'):

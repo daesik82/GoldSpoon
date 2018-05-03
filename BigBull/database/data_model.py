@@ -67,8 +67,22 @@ company_info_table = Table('company_info', __meta,
                         Column('equity_owers', Float()),
                         Column('stock_issued', Float()),
                         Column('cashflow_operations', Float()),
-
                        )
+
+
+market_trade_table = Table('market_trade_info', __meta,
+                           Column('id', BigInteger(), primary_key=True),
+                           Column('code', ForeignKey('stocks.code')),
+                           Column('market_type', Integer()),
+                           Column('date', DateTime()),
+                           Column('present_value', BigInteger()),
+                           Column('quant', BigInteger()),
+                           Column('buy_total', BigInteger()),
+                           Column('sell_total', BigInteger()),
+                           Column('market_sum', BigInteger()),
+                           Column('per', Float()),
+                           Column('pbr', Float()),
+                           )
 #Column('created_on', DateTime(), default=datetime.now),
 #                     Column('updated_on', DateTime(), default=datetime.now, onupdate=datetime.now),
 # hist_data_table 에 추가
